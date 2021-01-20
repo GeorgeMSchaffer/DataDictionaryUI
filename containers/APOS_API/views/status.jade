@@ -1,0 +1,20 @@
+extends layout
+block status
+  h1 STATUS
+    label Total： #{data.length}
+    hr
+    start
+    table.list
+      thead
+        tr
+          th Scan Date
+          th Scan Status
+          th Object Type
+          th Objects Scan
+      each item in data
+        tr
+          td= item.AP_Info_Date:
+          td= item.AP_Status
+          td= item.AP_Object_Type
+          td= item.AP_Objects_Scanned
+          td= item

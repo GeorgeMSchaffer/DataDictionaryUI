@@ -1,0 +1,19 @@
+extends layout
+block home
+    label Total： #{data.length}
+    hr
+    table.list
+      thead
+        tr
+          th Scan Date
+          th Scan Status
+          th Object Type
+          th Objects Scan
+          th 
+      each item in data
+      item
+        tr
+          td= item.AP_Info_Date
+          td= item.AP_Status
+          td= item.AP_Object_Type
+          td= item.AP_Objects_Scanned
