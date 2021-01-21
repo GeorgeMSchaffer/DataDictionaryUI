@@ -6,7 +6,7 @@ import TodoList from '../features/todoList/TodoList';
 import ObjectScanList from 'features/objectScans/ObjectScansList';
 import DataDictionaryApplicationsList from 'features/dataDictionary/DataDictionaryList';
 import { RouteProps } from "react-router";
-import { queryString }  from "query-string";
+//import { queryString }  from "query-string";
 
 //type TParams = { id: string };
 

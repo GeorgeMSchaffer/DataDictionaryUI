@@ -10,7 +10,7 @@ import MUIDataTable, {
 	MUIDataTableOptions,
 	MUIDataTableProps,
 } from "mui-datatables";
-import queryString from 'query-string';
+//import queryString from 'query-string';
 
 interface IProps {
 		//data: (any)[];
