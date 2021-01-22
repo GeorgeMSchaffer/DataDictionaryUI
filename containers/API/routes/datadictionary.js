@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
-let limit = 25
+var sql = require('mssql');
+
+const  defaultLimit = 25
 
 //[TODO] refactor back to db.js in way we can switch active config (APOS vs DataDictionary SQL servers) on a per request basis
 const db = {
@@ -23,12 +25,39 @@ router.get('/test/', function(req, res, next) {
   
 module.exports = router;
 
-router.get("/applications/", function (req, res, next) {
-	console.log('DB CONFIG',db)
-	sql.connect(db, function (err) {
-		if (err) console.log(err);
+const _Query = async function(sqlStatment,inputs=[]){
+	let error= null;
+	const data = [];
+	try{
+		//const conn = await new sql.Connection(db)
+		await sql.connect(db);
 
-		var request = new sql.Request();
+		const results = await sql.query(sqlStatment,inputs);
+		console.error('results',results.recordset[0]);
+		data.push(results.recordset[0]);
+
+	}
+	catch(err){
+		console.error('Query Failed',err);
+		error = err;
+	}
+	finally {
+	//	sql.disconnect();
+	console.log('DATA',data.length);
+		const rtn = {
+			success: (!error) ? true: false,
+			error: (error && error.message) ? error.message : null,
+			data: (data.length) ? data : []
+		}
+		console.log('QUERY RETURN',rtn);
+		return rtn;
+	}
+};
+
+
+
+router.get("/applications/", async function (req, res, next) {
+	const limit = req.query.params.limit || defaultLimit;
 		const sqlStatment = `
 			SELECT TOP (${limit}) 
 				[Id]
@@ -40,48 +69,27 @@ router.get("/applications/", function (req, res, next) {
 				,[LngNam]
 				,[AppDsc]
 			FROM [secApplications]`
-		request.query(
-			sqlStatment,
-			function (err, result) {
-				if (err) {
-					console.error(err);
-					res.send(err);
-				}
-				// var rowsCount = result.rowsAffected;
-				sql.close();
-				res.json(result);
-			}
-		); // request.query
-	}); // sql.conn
-});
+		const results = await s_Query(sqlStatment)
+		console.log('RESULTS',results);
+		res.json(results)
+	});
 
 
-router.get("/databases/", function (req, res, next) {
-	console.log('DB CONFIG',db)
-	sql.connect(db, function (err) {
-		if (err) console.error(err);
-
-		var request = new sql.Request();
+router.get("/databases/", async function (req, res, next) {
+		const limit = req.query.params.limit || defaultLimit;
+	//	sql
 		const sqlStatment = `
 		SELECT TOP (${limit}) 
-			,[Id]
+			[Id]
 			,[RowSts]
 			,[AppNam]
 			,[SrvNam]
 			,[DbNam]
 			,[AppTyp]
-		FROM [secDatabases]`
-		request.query(
-			sqlStatment,
-			function (err, result) {
-				if (err) {
-					console.error(err);
-					res.send(err);
-				}
-				// var rowsCount = result.rowsAffected;
-				sql.close();
-				res.json(result);
-			}
-		); // request.query
-	}); // sql.conn
+		FROM [secDatabases]`;
+		const results = await _Query(sqlStatment)
+		console.log('RESULTS',results);
+		res.json(results)
+
+ // sql.conn
 });
