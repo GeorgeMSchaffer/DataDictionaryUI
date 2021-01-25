@@ -34,5 +34,20 @@ export interface IDataDictionaryDatabases{
   AppNam: String
   SrvNam: String
   DbNam: String
-  AppTyp: String    
-  }
+  AppTyp: String
+}
+  
+export interface IDataDictionarySqlUsers{
+      SrvNam: String,
+      DbName: String,
+      UsrNam: String,
+      PrnId: Number,
+      UsrSid: String,
+      TypCod: String,
+      TypDsc: String,
+      Access: String,
+      DftSch: String,
+      UsrCrt: Date,
+      UsrChg: Date,
+      Refreshed: Date
+}

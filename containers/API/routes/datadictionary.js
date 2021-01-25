@@ -6,12 +6,12 @@ const  defaultLimit = 25
 
 //[TODO] refactor back to db.js in way we can switch active config (APOS vs DataDictionary SQL servers) on a per request basis
 const db = {
-    user: `DD_USER`,
-    password: `OpenSesame`,
-    server: `SPDDDB`,
-    database: process.env.SQL_SERVER_DB,
-  };
-
+  user: process.env.DATA_DICTIONARY_SQL_DB_USER,
+  password: process.env.DATA_DICTIONARY_SQL_DB_PASSWORD,
+  server: process.env.DATA_DICTIONARY_SQL_SERVER,
+  database: process.env.DATA_DICTIONARY_SQL_DB_SERVER_DB,
+};
+console.dir(db);
 var sql = require('mssql');
 
 /* GET users listing. */
@@ -43,7 +43,8 @@ const _Query = async function(sqlStatment,inputs=[]){
 	}
 	finally {
 	//	sql.disconnect();
-	console.log('DATA',data.length);
+		console.log('DATA', data.length);
+		await sql.close();
 		const rtn = {
 			success: (!error) ? true: false,
 			error: (error && error.message) ? error.message : null,
@@ -57,7 +58,7 @@ const _Query = async function(sqlStatment,inputs=[]){
 
 
 router.get("/applications/", async function (req, res, next) {
-	const limit = req.query.params.limit || defaultLimit;
+	const limit = (req.query.params && req.query.params.limit) ? req.query.params.limit : defaultLimit;
 		const sqlStatment = `
 			SELECT TOP (${limit}) 
 				[Id]
@@ -69,14 +70,18 @@ router.get("/applications/", async function (req, res, next) {
 				,[LngNam]
 				,[AppDsc]
 			FROM [secApplications]`
-		const results = await s_Query(sqlStatment)
+		const results = await _Query(sqlStatment)
 		console.log('RESULTS',results);
 		res.json(results)
 	});
 
 
 router.get("/databases/", async function (req, res, next) {
-		const limit = req.query.params.limit || defaultLimit;
+	const limit =
+    req.query.params && req.query.params.limit
+      ? req.query.params.limit
+      : defaultLimit;
+
 	//	sql
 		const sqlStatment = `
 		SELECT TOP (${limit}) 
@@ -90,6 +95,31 @@ router.get("/databases/", async function (req, res, next) {
 		const results = await _Query(sqlStatment)
 		console.log('RESULTS',results);
 		res.json(results)
+});
 
- // sql.conn
+router.get("/sqlusers/", async function (req, res, next) {
+	const limit =
+    req.query.params && req.query.params.limit
+      ? req.query.params.limit
+      : defaultLimit;
+
+  //	sql
+	const sqlStatment = `
+	SELECT TOP (${limit})
+			[SrvNam]
+      ,[DbNam]
+      ,[UsrNam]
+      ,[PrnId]
+      ,[UsrSid]
+      ,[TypCod]
+      ,[TypDsc]
+      ,[Access]
+      ,[DftSch]
+      ,[UsrCrt]
+      ,[UsrChg]
+      ,[Refreshed]
+  FROM [DataDictionary].[dbo].[SqlUsers]`;
+  const results = await _Query(sqlStatment);
+  console.log("RESULTS", results);
+  res.json(results);
 });

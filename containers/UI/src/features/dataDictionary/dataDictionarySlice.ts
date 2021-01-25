@@ -1,15 +1,17 @@
 import { createSlice, PayloadAction,AsyncThunkAction,createAsyncThunk,createAction,createReducer } from '@reduxjs/toolkit';
 import { useSelector,useDispatch } from 'react-redux';
 import { AppThunk, AppDispatch } from 'app/store'
-import { IDataDictionaryApplication,IDataDictionaryDatabases } from 'features/types';
+import { IDataDictionaryApplication,IDataDictionaryDatabases,IDataDictionarySqlUsers } from 'features/types';
 import { getUrlParameter} from 'utils/request';
 import axios from 'axios';
+import { getDate } from 'date-fns';
 interface IState {
 	  applications: IDataDictionaryApplication[],
-		databases: IDataDictionaryDatabases[]
+	databases: IDataDictionaryDatabases[]
+
 }
 
-const initialState = <IState> {
+const initialState = <IState>{
 	applications: [{
 			"Id": 14,
 			"RowSts": "A",
@@ -21,17 +23,17 @@ const initialState = <IState> {
 			"AppDsc": "ADP Interface"
 		}],
 	databases: [{
-			Id: 1,
-			RowSts: 'A',
-			AppNam: 'ADP',
-			SrvNam: 'ADPEV5',
-			DbNam: 'String',
-			AppTyp: 'String'  
+			"Id": 1,
+			"RowSts": 'A',
+			"AppNam": 'ADP',
+			"SrvNam": 'ADPEV5',
+			"DbNam": 'String',
+			"AppTyp": 'String'
 	}]
 }
 
 
-const setObjectScans = createAction<IDataDictionaryApplication[]>('getDataDictionaryApplications')
+const setApplications = createAction<IDataDictionaryApplication[]>('getDataDictionaryApplications')
 
 const dataDictionarySlice = createSlice({
 	name: "dataDictionary",
@@ -48,6 +50,13 @@ const dataDictionarySlice = createSlice({
 			console.log('IN setDataDictionaryApplications, state passed', state)
 			console.log('action', action, 'action.payload', action.payload);
 			state.databases.concat(action.payload);
+		},
+		setDataDictionarySqlUsers(state, action: PayloadAction<IDataDictionarySqlUsers>) {
+			console.log('IN setDataDictionarySqlUsers, state passed', state)
+			console.log('action', action, 'action.payload', action.payload);
+			//debugger;
+			//state.sqlusers.push(action.payload);
+			//state.sqlusers;
 		},
 	},
 	extraReducers: (builder) => {
@@ -78,17 +87,19 @@ export const getObjectScans = createAsyncThunk(
   }
 )
 */
-export const getDataDictionaryApplications = (
-	limit: Number = 25
-): AppThunk => async (dispatch: AppDispatch) => {
-	let limit = getUrlParameter('limit')
-	if (!limit) {
-		let limit=25
-	}
+//[TODO]  Should create a ENUM to limit the choice of type to valid ones
+interface IArgs {
+	limit: Number | String
+	type:String
+}
+
+export const getDataDictionaryApplications = (args: IArgs): AppThunk => async (dispatch: AppDispatch) => {
+	const { limit=25, type='applications' } = args;
 //	console.log('TYPE', type);
-		const res = await axios.get(`/data-dictionary/applications/?limit=${limit}`);
-		console.log('DISPATCHING RESULTS TO SET', res.data.recordsets);
-	dispatch(dataDictionarySlice.actions.setDataDictionaryApplications(res.data.recordsets));
+	const res = await axios.get(`/datadictionary/${type}/?limit=${limit}`);
+	console.dir('RES!', res.data);
+		console.log('DISPATCHING RESULTS TO SET', res.data.data);
+	dispatch(dataDictionarySlice.actions.setDataDictionaryApplications(res.data.data));
 }
 
 // export const getObjectScans = createAsyncThunk(

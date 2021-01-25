@@ -4,7 +4,10 @@ import AddTodo from 'features/todoList/AddTodo';
 //import '../App.css';
 import TodoList from '../features/todoList/TodoList';
 import ObjectScanList from 'features/objectScans/ObjectScansList';
-import DataDictionaryApplicationsList from 'features/dataDictionary/DataDictionaryList';
+import SqlServerUsers from 'features/dataDictionary/SqlUsersList';
+import ApplicationList from 'features/dataDictionary/DataDictionaryList';
+import Databases from 'features/dataDictionary/databasesList'
+import DataDictionarySqlUsersList from 'features/dataDictionary/SqlUsersList';
 import { RouteProps } from "react-router";
 //import { queryString }  from "query-string";
 
@@ -21,13 +24,12 @@ function App(props: IProps) {
 	//console.log(window.location.search);
   return (
     <div className="App">
-      <h1>Todos</h1>
-      <AddTodo />
-      <TodoList />
-      <h2>Object Scans</h2>
-      <ObjectScanList />
       <h2>Applications</h2>
-      <DataDictionaryApplicationsList/>
+      <ApplicationList />
+      <h2>Databaes</h2>
+      <Databases/>
+      <h2>SQL Users</h2>
+      <DataDictionarySqlUsersList />
     </div>
   );
 }

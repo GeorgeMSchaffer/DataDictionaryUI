@@ -37,69 +37,69 @@ interface IProps {
 	};
 const columns: MUIDataTableColumn[] = [
 			{
-				name: "AppDsc",
-				label: "APOS Scan Date",
+				name: "SrvNam",
+				label: "Server Name",
 			},
 			{
-				name: "AppNam",
-				label: "Enviroment",
+				name: "TypCod",
+				label: "Type Code",
 			},
 			{
-				name: "AppTyp",
-				label: "Status",
+				name: "TypDesc",
+				label: "Type Description",
 			},
 			{
-				name: "Domain",
-				label: "Object Type",
+				name: "Access",
+				label: "Access",
 			},
 			{
-				name: "GrpPfx",
-				label: "Objects Scanned",
+				name: "DftSch",
+				label: "Default Schema",
 			},
 			{
-				name: "Id",
-				label: "Scan Date",
+				name: "UsrCrt",
+				label: 'User Created Date',
 			},
 			{
-				name: "lngNam",
-				label: "Last Scan Pulse",
+				name: "UsrChg",
+				label: "User Last Update Date",
 			},
 			{
-				name: "RowSts",
-				label: "Last Scanned Object ID",
+				name: "Refreshed",
+				label: "User Refreshed Date",
 			}
 ];
 
-export default function DataDictionaryApplicationsList(props:IProps) {
+export default function DataDictionarySqlUsersList(props:IProps) {
 	const dispatch = useDispatch();
 	console.log('SCAN LIST PROPS', props);
 
- const applications = useSelector(
+ const data = useSelector(
    (state: RootState) => {
      console.log('USE SELECT RootState', state);
-     return state.dataDicitionaryApplications.applications
+     //return state.dataDicitionaryApplications.sqlusers;
+     return [];
    });
 
   useEffect(() => {
-		console.debug('DISPATCHING FETCH', 'current', applications);
 		//const type = 'webi';
 		
 		//[TODO] REFACTOR so the table has the same value
 		dispatch(getDataDictionaryApplications({
 			limit: 25,
-			type: 'applications'
+			type: 'sqlusers'
 		}));
 	//	console.log(location);
         // Output: '?id=1&type=Pizza'
         // Output: '#id=1&type=Pizza'
 //    dispatch(fetchUserById())
-  },[applications,dispatch])
+  },[data,dispatch])
  
   return (
     <Paper>
 			<MUIDataTable
 				title={"TEST"}
-				data={applications}
+				data={data}
 				columns={columns}
 				options={TableOptions}
 			/>

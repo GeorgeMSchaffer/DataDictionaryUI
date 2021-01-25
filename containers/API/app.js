@@ -17,8 +17,8 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-app.listen(process.env.port);
-console.log("Web Server is listening at port " + (process.env.port));
+app.listen(process.env.PORT);
+console.log("Web Server is listening at port " + (process.env.PORT));
 
 const allowedOrigins = ["localhost:3001", "localhost"];
 app.use(
@@ -45,7 +45,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', users);
 app.use('/apos/', apos);
-app.use(`/data-dictionary/`,dataDictionary);
+app.use(`/datadictionary/`,dataDictionary);
 app.use('/adg/', adg);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

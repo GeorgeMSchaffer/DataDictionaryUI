@@ -3,13 +3,13 @@ import { RootState } from 'app/rootReducer';
 import { useSelector,useDispatch } from 'react-redux';
 import { Paper } from "@material-ui/core";
 import { getDataDictionaryApplications } from './dataDictionarySlice';
-import { useLocation,useHistory} from 'react-router-dom';
 import MUIDataTable, {
 	ExpandButton,
 	MUIDataTableColumn,
 	MUIDataTableOptions,
 	MUIDataTableProps,
 } from "mui-datatables";
+import { getUrlParameter } from '../../utils/request';
 //import queryString from 'query-string';
 
 interface IProps {
@@ -74,32 +74,27 @@ export default function DataDictionaryApplicationsList(props:IProps) {
 	const dispatch = useDispatch();
 	console.log('SCAN LIST PROPS', props);
 
- const applications = useSelector(
+ const data = useSelector(
    (state: RootState) => {
      console.log('USE SELECT RootState', state);
      return state.dataDicitionaryApplications.applications
    });
 
-  useEffect(() => {
-		console.debug('DISPATCHING FETCH', 'current', applications);
-		//const type = 'webi';
-		
+  useEffect(() => {		
 		//[TODO] REFACTOR so the table has the same value
-		dispatch(getDataDictionaryApplications({
-			limit: 25,
-			type: 'applications'
-		}));
+    let limit = getUrlParameter('limit') || 25;
+    dispatch(getDataDictionaryApplications({limit:limit,type:'databases'}));
 	//	console.log(location);
         // Output: '?id=1&type=Pizza'
         // Output: '#id=1&type=Pizza'
 //    dispatch(fetchUserById())
-  },[applications,dispatch])
+  },[data,dispatch])
  
   return (
     <Paper>
 			<MUIDataTable
 				title={"TEST"}
-				data={applications}
+				data={data}
 				columns={columns}
 				options={TableOptions}
 			/>

@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction,AsyncThunkAction,createAsyncThunk,createAction,createReducer } from '@reduxjs/toolkit';
-import { useSelector,useDispatch } from 'react-redux';
 import { AppThunk, AppDispatch } from 'app/store'
 import { IObjectScanResult } from 'features/types';
 import { getUrlParameter} from 'utils/request';
