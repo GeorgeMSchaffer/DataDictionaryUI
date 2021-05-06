@@ -55,7 +55,18 @@ const _Query = async function(sqlStatment,inputs=[]){
 	}
 };
 
+router.get('/instances/failed/', async function (req, res, next) {
+	const limit =
+	req.query.params && req.query.params.limit
+	  ? req.query.params.limit
+	  : defaultLimit;
 
+  //	sql
+	const sqlStatment = `SELECT COUNT(1) from information_schema.tables`;
+  const results = await Query(db,sqlStatment);
+  console.log("RESULTS", results);
+  res.json(results);
+});
 
 router.get("/applications/", async function (req, res, next) {
 	const limit = (req.query.params && req.query.params.limit) ? req.query.params.limit : defaultLimit;

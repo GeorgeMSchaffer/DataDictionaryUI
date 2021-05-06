@@ -8,6 +8,7 @@ import SqlServerUsers from 'features/dataDictionary/SqlUsersList';
 import ApplicationList from 'features/dataDictionary/DataDictionaryList';
 import Databases from 'features/dataDictionary/databasesList'
 import DataDictionarySqlUsersList from 'features/dataDictionary/SqlUsersList';
+import InstanceList from 'features/instances/InstanceList';
 import { RouteProps } from "react-router";
 //import { queryString }  from "query-string";
 
@@ -24,12 +25,8 @@ function App(props: IProps) {
 	//console.log(window.location.search);
   return (
     <div className="App">
-      <h2>Applications</h2>
-      <ApplicationList />
-      <h2>Databaes</h2>
-      <Databases/>
-      <h2>SQL Users</h2>
-      <DataDictionarySqlUsersList />
+      <InstanceList/>
+
     </div>
   );
 }

@@ -1,5 +1,3 @@
-import { IDataDictionaryApplication } from 'features/types';
-import { IDataDictionaryApplication, IDataDictionaryDatabases } from './types';
 
 export interface IObjectScanResult {
   AP_Info_Date: String,
@@ -54,6 +52,33 @@ export interface IDataDictionarySqlUsers{
       Refreshed: Date
 }
 
+export interface IInstances{
+  SI_ID : Number
+  ,System_Name : String
+  ,SI_NAME : String
+  ,SI_SCHEDULE_STATUS: Number
+  ,SI_STARTTIME : String
+  ,SI_ENDTIME : String
+  ,SI_UPDATE_TS: String
+  ,SI_ERROR_MESSAGE: String
+  ,SI_SUBMITTER:String
+  ,SI_PROGID: String
+  ,AP_Location: String
+  ,AP_Parameters: String
+  ,AP_Destination: String
+  ,AP_Alert: String
+  ,AP_Database: String
+  ,SI_NOTIFICATION: String
+  ,SI_FILEPATH: String
+  ,SI_CREATION_TIME: String
+  ,AP_FileSize: Number
+  ,SI_SCHED_NOW: Number
+  ,SI_RECURRING: Number
+  ,SI_Schedule_Type: String
+  ,SI_LAST_RUN_TIME: String  
+  ,SI_OWNER : String
+}
+
 /*
   [TODO]  I want to be able to drill down bases on type and selecting it.  For example for "sqlusers" we would pass the string of 'sqlusers' for type. 
   This inturn would set the API url to {baseurl}/{type}.  When this happens i want to be able to pull the 'sqlusers' entry in the IDataDictionaryInterface
@@ -67,4 +92,5 @@ export interface IDataDictionaryInterfaces{
   'applications': IDataDictionaryApplication
   'databases': IDataDictionaryDatabases,
   'sqlusers' : IDataDictionarySqlUsers
+  'instances': IInstances
 }

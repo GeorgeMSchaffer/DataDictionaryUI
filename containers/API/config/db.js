@@ -1,10 +1,15 @@
 require('dotenv').config();
 const db = {
-  user: process.env.DATA_DICTIONARY_SQL_DB_USER,
-  password: process.env.DATA_DICTIONARY_SQL_DB_PASSWORD,
-  server: process.env.DATA_DICTIONARY_SQL_SERVER,
-  database: process.env.DATA_DICTIONARY_SQL_DB_SERVER_DB,
+  data_dictionary_user: process.env.DATA_DICTIONARY_SQL_DB_USER,
+  data_dictionary_password: process.env.DATA_DICTIONARY_SQL_DB_PASSWORD,
+  data_dictionary_server: process.env.DATA_DICTIONARY_SQL_SERVER,
+  data_dictionary_database: process.env.DATA_DICTIONARY_SQL_DB_SERVER_DB,
+  apos_db_user: process.env.DATA_DICTIONARY_SQL_DB_USER,
+  apos_db_password: process.env.DATA_DICTIONARY_SQL_DB_PASSWORD,
+  apos_db_server: process.env.DATA_DICTIONARY_SQL_SERVER,
+  apos_db_database: process.env.DATA_DICTIONARY_SQL_DB_SERVER_DB,
+
 };
-console.debug('DB Server and Database',db.server,db.database)
+console.log('DB CONFIG',db);
 module.exports = db;
 
