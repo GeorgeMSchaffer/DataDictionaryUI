@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { RootState } from 'app/rootReducer';
-import { useSelector,useDispatch } from 'react-redux';
-import { Paper } from "@material-ui/core";
-import { getInstances } from './InstanceSlice';
+import { Link } from 'react-router-dom';
+import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import {useDispatch, useSelector } from 'react-redux';
+import {getInstances, getInstancesAsyncThunk } from './InstanceSlice';
 import { useLocation,useHistory} from 'react-router-dom';
+import { withStyles } from '@material-ui/core/styles';
+import { Dialog, Paper, Button, DialogActions, DialogContent, DialogTitle, Typography } from '@material-ui/core';
+import instance from './mockInstanceAPI'
+
 import MUIDataTable, {
 	ExpandButton,
 	MUIDataTableColumn,
@@ -11,11 +16,16 @@ import MUIDataTable, {
 	MUIDataTableProps,
 } from "mui-datatables";
 import queryString from 'query-string';
+import instances from 'features/instances/InstanceSlice';
+import { IInstance } from '../types';
 
 interface IProps {
-		//data: (any)[];
+		si_id?: Number;
+		instances?: IInstance[]
 	};
-	interface IState { };
+	interface IState { 
+		instances: IInstance[]
+	};
 
 	const TableOptions: MUIDataTableOptions = {
 		jumpToPage: true,
@@ -34,11 +44,23 @@ interface IProps {
 		draggableColumns: {
 			enabled: true,
 		}
-	};
-const columns: MUIDataTableColumn[] = [
+};
+
+
+export default function InstanceList(props: IProps) {
+	const columns: MUIDataTableColumn[] = [
 			{
 				name: "SI_ID",
 				label: "Object ID",
+				options: {
+					customBodyRender: (data, dataIndex, rowIndex) => {
+						const si_id = data;
+						return (
+							<Button onClick={()=>openInstanceDetailModal(si_id)}>Details</Button>
+						)
+					}
+
+				}
 			},
 			{
 				name: "System_Name",
@@ -148,40 +170,89 @@ const columns: MUIDataTableColumn[] = [
 				name: "SI_RECURRING",
 				label: "Configutation XML",
 			},
+];
 
-		];
+	const [isModelOpen,setIsModelOpen] = useState(true);
 
-export default function InstanceList(props:IProps) {
-	const dispatch = useDispatch();
+	const { si_id } = props;
+
+	const openInstanceDetailModal = (si_id: number) => {
+		console.log('OPEN INSTANCE DETAIL MODEL CALLED', si_id,'isModelOpen',isModelOpen);
+		setIsModelOpen(true);
+	}
+	const onHandleClose = () => {
+		setIsModelOpen(false)
+	}
+
+	const dispatch = useAppDispatch();
 	console.log('SCAN LIST PROPS', props);
 
- const scans = useSelector(
-   (state: RootState) => {
-     console.log('USE SELECT RootState', state);
-     return state.instances
-   });
-	console.log('name',props);
+	const instances = useSelector((state:RootState)=>{
+		console.log('USE SELECTOR',state);
+		return state.instances.instances;
+	  });
+	
 
   useEffect(() => {
-		console.debug('DISPATCHING FETCH', 'current', scans);
-		const type = 'webi';
-		dispatch(getInstances(type));
+		console.debug('DISPATCHING FETCH', 'current', instances);
+		dispatch(getInstancesAsyncThunk());
 	//	console.log(location);
-        // Output: '?id=1&type=Pizza'
-        // Output: '#id=1&type=Pizza'
+		// Output: '?id=1&type=Pizza'
+		// Output: '#id=1&type=Pizza'
 //    dispatch(fetchUserById())
-  },[scans,dispatch])
+  },[instances,dispatch]);
  
   return (
-    <Paper>
-			<MUIDataTable
+	<Paper>
+		<b>Number of results:</b> {instances.length}
+		  <br />
+		  {(isModelOpen)
+			  ? <Paper><InstanceModal onClose={onHandleClose} data={instance.Root.Object[0]} open={true}/></Paper>
+				: ''
+			}
+		<MUIDataTable
 				title={"TEST"}
-				data={scans}
+				data={instances}
 				columns={columns}
 				options={TableOptions}
 			/>
-    </Paper>
+	</Paper>
   );
 }
 
+export interface DialogProps {
+	open: boolean;
+	data: IInstance,
+	onClose(): any
+}
 
+export function InstanceModal(props:DialogProps) {
+	const { open, data,onClose } = props;
+	console.log('INSTANCE MODAL', props);
+	return (
+		<Dialog open={true}>
+			<Paper>
+			<DialogTitle>Instance Details</DialogTitle>
+				<DialogContent>The detail info goes here
+					Cluster:
+					SI_ID:
+					SI_PARENTID:
+					SI_LOCATION:
+					InstanceName,
+					SchedulingInfo,
+					PluginInterface,
+					InstanceManagerSearch,
+					ObjectManagerValidationManagerWebiMigratorSearch,
+					APOS,
+					ObjectProperties: {data.ObjectProperties}		
+					KEYS {JSON.stringify(Object.keys(data))}
+				<hr/>
+					{JSON.stringify(data)}
+
+			</DialogContent>
+			<DialogActions><Button onClick={()=>onClose()}>Close</Button></DialogActions>
+			</Paper>
+	   </Dialog>
+
+   )
+}
