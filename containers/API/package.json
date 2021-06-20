@@ -1,0 +1,40 @@
+{
+  "name": "express-mssql",
+  "version": "1.0.0",
+  "description": "This is a demo for node.je Express (ejs) with mssql",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "pm2 start ./bin/www",
+    "stop": "pm2 stop ./bin/www",
+    "dev": "nodemon ./bin/www"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "body-parser": "~1.17.1",
+    "cookie-parser": "~1.4.3",
+    "cors": "^2.8.5",
+    "debug": "~2.6.3",
+    "dotenv": "^8.2.0",
+    "express": "~4.15.2",
+    "jade": "~1.11.0",
+    "morgan": "~1.8.1",
+    "mssql": "^4.0.4",
+    "pm2": "^2.4.6",
+    "serve-favicon": "~2.4.2",
+    "xml2js": "^0.4.23"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/explooosion/Node.js-Express-With-MSSQL.git"
+  },
+  "author": "Robby",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/explooosion/Node.js-Express-With-MSSQL/issues"
+  },
+  "homepage": "https://github.com/explooosion/Node.js-Express-With-MSSQL#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
