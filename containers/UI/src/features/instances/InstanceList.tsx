@@ -6,8 +6,9 @@ import {useDispatch, useSelector } from 'react-redux';
 import {getInstances, getInstancesAsyncThunk } from './InstanceSlice';
 import { useLocation,useHistory} from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
-import { Dialog, Paper, Button, DialogActions, DialogContent, DialogTitle, Typography } from '@material-ui/core';
+import { Dialog, Paper, Button, DialogActions, DialogContent, DialogTitle, Typography,List,ListItem } from '@material-ui/core';
 import instance from './mockInstanceAPI'
+import { IInstanceProps } from '../../features/types';
 
 import MUIDataTable, {
 	ExpandButton,
@@ -177,6 +178,7 @@ export default function InstanceList(props: IProps) {
 	const { si_id } = props;
 
 	const openInstanceDetailModal = (si_id: number) => {
+		console.log('INSTANCE PROPS ARE', instance);
 		console.log('OPEN INSTANCE DETAIL MODEL CALLED', si_id,'isModelOpen',isModelOpen);
 		setIsModelOpen(true);
 	}
@@ -207,7 +209,7 @@ export default function InstanceList(props: IProps) {
 		<b>Number of results:</b> {instances.length}
 		  <br />
 		  {(isModelOpen)
-			  ? <Paper><InstanceModal onClose={onHandleClose} data={instance.Root.Object[0]} open={true}/></Paper>
+			  ? <Paper><InstanceModal data={instance} onClose={onHandleClose} open={true} /></Paper>
 				: ''
 			}
 		<MUIDataTable
@@ -222,32 +224,74 @@ export default function InstanceList(props: IProps) {
 
 export interface DialogProps {
 	open: boolean;
-	data: IInstance,
+	data: any,
 	onClose(): any
 }
 
 export function InstanceModal(props:DialogProps) {
-	const { open, data,onClose } = props;
+	const { open, data, onClose } = props;
 	console.log('INSTANCE MODAL', props);
 	return (
 		<Dialog open={true}>
 			<Paper>
 			<DialogTitle>Instance Details</DialogTitle>
 				<DialogContent>The detail info goes here
-					Cluster:
-					SI_ID:
-					SI_PARENTID:
-					SI_LOCATION:
-					InstanceName,
-					SchedulingInfo,
-					PluginInterface,
-					InstanceManagerSearch,
-					ObjectManagerValidationManagerWebiMigratorSearch,
-					APOS,
-					ObjectProperties: {data.ObjectProperties}		
-					KEYS {JSON.stringify(Object.keys(data))}
-				<hr/>
-					{JSON.stringify(data)}
+				<List>
+					<ListItem>Cluster: {data.Cluster}</ListItem>
+					<ListItem>SI_ID {data.SI_ID}:</ListItem>
+					<ListItem>SI_PARENTID: {data.SI_PARENTID}</ListItem>
+					<ListItem>SI_LOCATION: {data.SI_LOCATION}</ListItem>
+					<ListItem>InstanceName,{data.InstanceName}</ListItem>
+						<ListItem>SchedulingInfo:
+							<List>
+								<ListItem>Type:{data.SchedulingInfo.Type}</ListItem>
+								<ListItem>Dependencies:{data.SchedulingInfo.Dependencies}</ListItem>
+								<ListItem>Begin Date:{data.SchedulingInfo.BeginDate}</ListItem>
+								<ListItem>End Date:{data.SchedulingInfo.EndDate}</ListItem>
+								<ListItem>RetriesAllowed:{JSON.stringify(data.SchedulingInfo.RetriesAllowed)}</ListItem>
+								<ListItem>Notification: {JSON.stringify(data.SchedulingInfo.Notification)}</ListItem>
+								<ListItem>Type {JSON.stringify(data.SchedulingInfo.RetriesAllowed)} </ListItem>
+								<ListItem>Dependants {JSON.stringify(data.SchedulingInfo.RetriesAllowed)}</ListItem>
+								<ListItem>Dependencies {JSON.stringify(data.SchedulingInfo.Dependencies)}</ListItem>
+								<ListItem>BeginDate {JSON.stringify(data.SchedulingInfo.BeginDate)}</ListItem>
+								<ListItem>EndDate {JSON.stringify(data.SchedulingInfo.EndDate)}</ListItem>
+								<ListItem>RetriesAllowed {JSON.stringify(data.SchedulingInfo.RetriesAllowed)}</ListItem>
+								<ListItem>RetryInterval {JSON.stringify(data.SchedulingInfo.RetryInterval)}</ListItem>
+								<ListItem>AlertDestination {JSON.stringify(data.SchedulingInfo.AlertDestination)}</ListItem>
+								<ListItem>Notification {JSON.stringify(data.SchedulingInfo.Notification)}</ListItem>
+								<ListItem>SI_Cleanup {JSON.stringify(data.SchedulingInfo.SI_Cleanup)}</ListItem>
+								<ListItem>SI_NAME{JSON.stringify(data.SchedulingInfo.Notification.SI_NAME)}</ListItem>
+								<ListItem>SI_OBJID:{JSON.stringify(data.SchedulingInfo.Notification.SI_OBJID)}</ListItem>
+								<ListItem>SI_ENDTIME{JSON.stringify(data.SchedulingInfo.Notification.SI_ENDTIME)}</ListItem>
+								<ListItem>SI_STARTTIME{data.SchedulingInfo.Notification.SI_STARTTIME}</ListItem>
+								<ListItem>SI_MACHINE_USED:{data.SchedulingInfo.Notification.SI_MACHINE_USED}</ListItem>
+								<ListItem>SI_RETRIES_ATTEMPTED:{JSON.stringify(data.SchedulingInfo.Notification.SI_RETRIES_ATTEMPTED)}</ListItem>
+								<ListItem>SI_RUN_ON_TEMPLATE:{data.SchedulingInfo.Notification.SI_NAME}</ListItem>
+								<ListItem>SI_SCHED_NOW:{JSON.stringify(data.SchedulingInfo.SI_SCHED_NOW)}</ListItem>
+								<ListItem>SI_SUBMITTER:{data.SchedulingInfo.Notification.SI_NAME}</ListItem>
+								<ListItem>SI_SUBMITTERID:{data.SchedulingInfo.Notification.SI_NAME}</ListItem>
+								<ListItem>SI_TIMEZONE_ID:{JSON.stringify(data.SchedulingInfo.Notification.SI_NAME)}</ListItem>
+								<ListItem>SI_UISTATUS:{JSON.stringify(data.SchedulingInfo.Notification.SI_NAME)}</ListItem>
+								<ListItem>SI_OUTCOME:{JSON.stringify(data.SchedulingInfo.Notification.SI_NAME)}</ListItem>
+								<ListItem>SI_PROGRESS:{JSON.stringify(data.SchedulingInfo.Notification.SI_APS_NAME)}</ListItem>
+								<ListItem>SI_APS_NAME:{JSON.stringify(data.SchedulingInfo.Notification.SI_APS_NAME)}</ListItem>
+								<ListItem>SI_APS_STARTIME:{JSON.stringify(data.SchedulingInfo.Notification.SI_APS_STARTIME)}</ListItem>
+								<ListItem>SI_SCHEDULE_INTERVAL_NDAYS:{JSON.stringify(data.SchedulingInfo.Notification.SI_SCHEDULE_INTERVAL_NDAYS)}</ListItem>
+								<ListItem>SI_SCHEDULE_FLAGS:{data.SchedulingInfo.Notification.SI_SCHEDULE_FLAGS}</ListItem>
+								<ListItem>SI_SCHEDULE_TYPE:{JSON.stringify(data.SchedulingInfo.Notification.SI_SCHEDULE_TYPE)}</ListItem>
+								<ListItem>SI_SCHEDULE_INTERVAL_MINUTES:{JSON.stringify(data.SchedulingInfo.Notification.SI_SCHEDULE_INTERVAL_MINUTES)}</ListItem>
+								<ListItem>SI_SCHEDULE_INTERVAL_HOURS:{JSON.stringify(data.SchedulingInfo.Notification.SI_SCHEDULE_INTERVAL_HOURS)}</ListItem>
+								<ListItem>SI_SCHEDULE_INTERVAL_MONTHS:{JSON.stringify(data.SchedulingInfo.Notification.SI_SCHEDULE_INTERVAL_HOURS)}</ListItem>
+								<ListItem>SI_SCHEDULE_INTERVAL_NTHDAY:{JSON.stringify(data.SchedulingInfo.Notification.SI_SCHEDULE_INTERVAL_NTHDAY)}</ListItem>
+								<ListItem>SI_TYPE:{JSON.stringify(data.SchedulingInfo.Notification.SI_TYPE)}</ListItem>
+								<ListItem>SI_PID:{JSON.stringify(data.SchedulingInfo.Notification.SI_PID)}</ListItem>							
+							</List>
+						</ListItem>
+				</List>
+					<hr />
+					SCHEDULING INFO KEYS:  {JSON.stringify(Object.keys(data.SchedulingInfo))}
+					<hr />
+				SCHEDULING INFO DATA:	{JSON.stringify(data.SchedulingInfo)}
 
 			</DialogContent>
 			<DialogActions><Button onClick={()=>onClose()}>Close</Button></DialogActions>

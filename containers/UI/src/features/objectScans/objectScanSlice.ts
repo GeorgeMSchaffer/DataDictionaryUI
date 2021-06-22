@@ -1,8 +1,10 @@
 import { createSlice, PayloadAction,AsyncThunkAction,createAsyncThunk,createAction,createReducer } from '@reduxjs/toolkit';
 import { AppThunk, AppDispatch } from 'app/store'
-import { IObjectScanResult } from 'features/types';
+import { IObjectScanResult,IInstanceProps } from 'features/types';
 import { getUrlParameter} from 'utils/request';
 import axios from 'axios';
+
+//[TODO] refactor that instances and instanceDetails are part of the slice interface
 
 const initialState: IObjectScanResult[] = [
 	{
@@ -35,7 +37,7 @@ const initialState: IObjectScanResult[] = [
 	}
 ];
 
-const setObjectScans = createAction<IObjectScanResult[]>('getScans')
+const setObjectScans = createAction<IObjectScanResult[]>('getObjectScans')
 
 const objectScanSlice = createSlice({
 	name: "objectScans",

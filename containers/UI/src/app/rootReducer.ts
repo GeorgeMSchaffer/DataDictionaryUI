@@ -5,6 +5,7 @@ import objectScans from 'features/objectScans/objectScanSlice';
 import instances from 'features/instances/InstanceSlice';
 import visibilityFilter from 'features/visibilityFilter/visibiltyFilterSlice';
 import dataDicitionaryApplications from 'features/dataDictionary/dataDictionarySlice';
+console.log('ROOT REDUCER INSTANCES',instances);
 const rootReducer = combineReducers({
   todos,
   visibilityFilter,
