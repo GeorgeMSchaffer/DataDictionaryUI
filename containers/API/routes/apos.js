@@ -2,6 +2,9 @@ var express = require('express');
 var router = express.Router();
 const defaultLimit = 25;
 require('dotenv').config();
+const traverse = require('json-schema-traverse');
+
+
 
 //const Query = require('../Query');
 var sql = require('mssql');
@@ -13,17 +16,16 @@ const db = {
   };
 const _Query = async function(db,sqlStatment,inputs=[]){
 	let error= null;
-	const data = [];
+	let data =[];
 	console.debug('RECEIVED DB',db);
-	if (!db) throw "Unable to complete query! A database config object was not passed. ABORTING"
+	console.debug('EXECUTING SQL STATMENT',sqlStatment);
+	if (!db) throw "Unable to complete query! A database config object was not passed. ABORTING";
 	try{
 		//const conn = await new sql.Connection(db)
 		await sql.connect(db);
 
 		const results = await sql.query(sqlStatment,inputs);
-		console.error('results',results.recordset[0]);
-		data.push(results.recordset[0]);
-
+		data = results.recordset;
 	}
 	catch(err){
 		console.error('Query Failed',err);
@@ -31,14 +33,14 @@ const _Query = async function(db,sqlStatment,inputs=[]){
 	}
 	finally {
 	//	sql.disconnect();
-		console.log('DATA', data.length);
+		console.log('DATA', data);
 		await sql.close();
 		const rtn = {
 			success: (!error) ? true: false,
 			error: (error && error.message) ? error.message : null,
 			data: (data.length) ? data : []
 		}
-		console.log('QUERY RETURN',rtn);
+		console.log('_QUERY RETURNING', rtn.success, rtn.error, rtn.data.length);
 		return rtn;
 	}
 };
@@ -85,10 +87,10 @@ router.get("/scan/status/:scan_date/", function (req, res, next) {
 		req.query.params && req.query.params.limit
 		  ? req.query.params.limit
 		  : defaultLimit;
-	
+		console.debug('INSTANCE LIMIT IS',limit);
 	  //	sql
-		const sqlStatment = `SELECT 
-		TOP ${limit}
+		const sqlStatment = ` 
+		SELECT TOP 25
 			[SI_ID]
 			,[System_Name]
 			,[SI_NAME]
@@ -116,17 +118,14 @@ router.get("/scan/status/:scan_date/", function (req, res, next) {
 	ORDER BY SI_UPDATE_TS DESC
 	`;
 	  const results = await _Query(db,sqlStatment);
-	  console.log("RESULTS", results);
+	  	  console.log("!!!!!!!!!!!!!!!!!!!!!!!!!! RESULTS:\r\n ", results.length);
 	  res.json(results);
 	});
 
-	router.get('/instances/props/:si_id/', async function (req, res, next) {
-		const limit =
-		req.query.params && req.query.params.limit
-		  ? req.query.params.limit
-		  : defaultLimit;
-	
-		const inputs = {name:"si_id",type:sql.Int,value:req.params.sid}
+	router.get('/instances/:si_id/', async function (req, res, next) {
+		const { si_id } = req.params;
+
+		const inputs = { name: "si_id", type: sql.Int, value: si_id }
 	  //	sql
 		const sqlStatment = `
 		select 
@@ -136,17 +135,64 @@ router.get("/scan/status/:scan_date/", function (req, res, next) {
 			o.SI_ID = p.SI_ID 
 			AND o.System_Name = p.System_Name
 		)
-		WHERE O.SI_ID = @si_id
+		WHERE O.SI_ID = ${si_id}
 		`;
-	  const results = await _Query(db,sqlStatment,inputs);
-	  console.debug('RECEIVED RESULTS',results)
-	  const xml = results.data[0].si_instance_props;
-	  var parseString = require('xml2js').parseString;
-	  parseString(xml,function(err,json){
-			console.debug('RESULT WAS',json);
-			console.log("RESULTS", results);
-			res.json(json);	  
-		})
+	  const rtn = await _Query(db,sqlStatment,inputs);
+		const xml = rtn.data[0].si_instance_props;
+		
+		var parser = require('fast-xml-parser');
+		var he = require('he');
+		
+		const options = {
+			attributeNamePrefix : "@_",
+			attrNodeName: "attr", //default is 'false'
+			textNodeName : "#text",
+			ignoreAttributes : true,
+			ignoreNameSpace : true,
+			allowBooleanAttributes : true,
+			parseNodeValue : true,
+			parseAttributeValue : false,
+			trimValues: true,
+			cdataTagName: "__cdata", //default is 'false'
+			cdataPositionChar: "\\c",
+			parseTrueNumberOnly: false,
+			arrayMode: false, //"strict"
+			tagValueProcessor : a => he.decode(a),
+			attrValueProcessor: (val, attrName) => {
+				console.log('ATTR VALUE PROCESSER - NAME', attrName, 'VAL', val);
+			},//default is a=>a
+			tagValueProcessor : (val, tagName) => he.decode(val), //default is a=>a
+			stopNodes: ["parse-me-as-string"]
+		};
+
+		var json = parser.parse(xml, options);
+		rtn.data = json.Root.Object;
+		console.log('---------- RETURNING RTN ----------', rtn);
+		res.json(rtn);
+	  /*
+		var parser = require('xml2JSON');
+		parseString(xml, {
+			normalize: true,
+			normalizeTags: true,
+			mergeAttrs: true,
+			parseNumbers: true,
+			parseBooleans: true,
+			valueProcessors: [function (value, name) {
+				console.log('VALUE:', value, 'NAME', name, 'IS ARRAY', Array.isArray(value));
+				return value;
+			}]
+		}, function (err, json) {
+			if (err) {
+				console.error('ERROR PARSING JSON', err);
+				res.json({});
+			}
+			traverse(json, { allKeys: true }, (args) => {
+				console.log('TRAVERSE CALLED!',args)
+			});
+			res.json(json.root.object);
+		},)
+		*/
+
 	});
 
 	router.get("/view/", async function (req, res, next) {

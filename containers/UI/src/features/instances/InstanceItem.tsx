@@ -1,5 +1,5 @@
 import React from 'react'
-import {IInstances} from 'features/types';
+import {IInstance} from 'features/types';
 
 interface TodoProps {
 	completed: boolean,
@@ -7,6 +7,7 @@ interface TodoProps {
 }
 
 export default function InterfaceListItem({ completed, text }: TodoProps) {
+	console.log('TODO PROPS', completed, text);
 	return (
 		<li
 			style={{

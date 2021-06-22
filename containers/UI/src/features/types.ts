@@ -52,7 +52,7 @@ export interface IDataDictionarySqlUsers{
       Refreshed: Date
 }
 
-export interface IInstances{
+export interface IInstance{
   SI_ID : Number
   ,System_Name : String
   ,SI_NAME : String
@@ -79,6 +79,77 @@ export interface IInstances{
   ,SI_OWNER : String
 }
 
+export interface IInstanceProps{
+    Cluster: String
+    SI_ID: Number
+    SI_PARENTID: String
+    SI_LOCATION: String
+    InstanceName: String
+    SchedulingInfo: {
+      Type: Number
+      Dependants: Number
+      Dependencies: Number
+      BeginDate: String
+      EndDate: String
+      RetriesAllowed: Number
+      RetryInterval: Number
+      ScheduleOnBehalfOf:Number
+      ScheduleOnBehalfOfName: String
+      Destinations: String
+      ServerGroup: [Object]
+      AlertDestination: String
+      Notification: [Object]
+      SI_Cleanup: String
+    },
+    PluginInterface: '',
+    InstanceManagerSearch: {
+      Status: String
+      Recurring: String
+      Location: String
+      InstanceTitle: String
+      Started: String
+      Ended: String
+      Submitter: String
+      InstanceType: String
+      ParentID: Number
+      ID: Number
+      Component: String
+      CUID: String
+      ScheduledBy: String
+      Secured: String
+      Duration: String
+      Destination: String
+      JobServer: String
+      Created: String
+      Updated: String
+    },
+    ObjectManagerValidationManagerWebiMigratorSearch: {
+      ObjectType: Number
+      Name: String
+      Location: String
+      CRVersion: String
+      Owner: String
+      Children: Number
+      CreationTime: String
+      UpdateTime: String
+      ParentID: Number
+      ID: Number
+      Depth: Number
+      CUID: String
+      GUID: String
+      RUID: String
+      Component: String
+      ProgID: String
+      Title: String
+    },
+    APOS: String
+    ObjectProperties: {
+      Properties: Object
+      SchedulingProperties: Object
+      ProcessingProperties: Object
+    }
+  }
+//The detail info goes here KEYS ["Cluster","SI_ID","SI_PARENTID","SI_LOCATION","InstanceName","SchedulingInfo","PluginInterface","InstanceManagerSearch","ObjectManagerValidationManagerWebiMigratorSearch","APOS","ObjectProperties"]
 /*
   [TODO]  I want to be able to drill down bases on type and selecting it.  For example for "sqlusers" we would pass the string of 'sqlusers' for type. 
   This inturn would set the API url to {baseurl}/{type}.  When this happens i want to be able to pull the 'sqlusers' entry in the IDataDictionaryInterface
@@ -92,5 +163,5 @@ export interface IDataDictionaryInterfaces{
   'applications': IDataDictionaryApplication
   'databases': IDataDictionaryDatabases,
   'sqlusers' : IDataDictionarySqlUsers
-  'instances': IInstances
+  'instances': IInstance[]
 }
